@@ -1,2 +1,41 @@
 ---
-# tasks file for elasticsearch-service
+
+- name: Check if elasticsearch service is running
+  shell: docker service ls | awk '{print $2}' | grep elasticsearch
+  changed_when: false
+  register: elastic_status
+  failed_when: elastic_status.rc == 2
+
+- name: Setup and deploy elasticsearch
+  include_tasks: elasticsearch.yml
+  when: elastic_status.rc == 1
+
+- name: Check if kibana service is running
+  shell: docker service ls | awk '{print $2}' | grep kibana
+  changed_when: false
+  register: kibana_status
+  failed_when: kibana_status.rc == 2
+
+- name: Setup and deploy kibana
+  include_tasks: kibana.yml
+  when: kibana_status.rc == 1
+
+#  - name: Check if logstash service is running
+#    shell: docker service ls | awk '{print $2}' | grep logstash
+#    changed_when: false
+#    register: logstash_status
+#    failed_when: logstash_status.rc == 2
+
+#  - name: Setup and deploy logstash
+#    include_tasks: logstash.yml
+#    when: logstash_status.rc == 1
+
+#    #- name: Check if metricbeat service is running
+#    #shell: docker service ls | awk '{print $2}' | grep metricbeat
+#    #changed_when: false
+#    #register: metricbeat_status
+#    #failed_when: metric_status.rc == 2
+
+#  - name: Setup and deploy metricbeat
+#    include_tasks: metricbeat.yml
+#    when: metricbeat_status.rc == 1

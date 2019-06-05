@@ -1,0 +1,42 @@
+---
+- name: Set required VM settings
+  become: "yes"
+  command: sysctl -w vm.max_map_count=262144
+
+- name: Create volume directory for elasticsearch
+  become: "yes"
+  file:
+    path: /srv/nfs/elastic/elasticsearch/data
+    state: directory
+    mode: 0777
+
+- name: Deploy elasticsearch data service
+  docker_stack:
+    state: present
+    name: elasticsearch
+    compose:
+      - version: '3.7'
+        services:
+          elasticsearch:
+            image: 'docker.elastic.co/elasticsearch/elasticsearch:7.1.1'
+            environment:
+              - network.host=0.0.0.0
+              - discovery.zen.ping.unicast.hosts=elasticsearch
+              - discovery.zen.minimum_master_nodes=1
+            volumes:
+              - nfs:/usr/share/elasticsearch/data
+            networks:
+              - mangonet
+            ports:
+              - 9200:9200
+            deploy:
+              endpoint_mode: dnsrr
+              labels:
+                traefik.port: 9200
+          volumes:
+            nfs:
+            driver: local
+            driver_opts:
+              type: nfs
+              o: addr=grid011.sysmango.net, vers=4.1
+              device: ":/srv/nfs/elastic/elasticsearch/data"

@@ -1,0 +1,59 @@
+---
+
+- name: Create elastic base directory
+  become: "yes"
+  file:
+    path: /srv/nfs/elastic
+    state: directory
+    mode: 0777
+
+- name: Create volume directory for kibana
+  become: "yes"
+  file:
+    path: /srv/nfs/elastic/kibana
+    state: directory
+    mode: 0777
+
+- name: Create volume directory for kibana
+  become: "yes"
+  file:
+    path: /srv/nfs/elastic/kibana/data
+    state: directory
+    mode: 0777
+
+- name: Deploy kibana
+  docker_swarm_service:
+    name: kibana
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    networks:
+      - mangonet
+    labels:
+      "traefik.port=8080"
+    mounts:
+      - src: nfs
+        target: /var/lib/kibana
+        type: volume
+        driver_config:
+          driver_opts:
+            type: nfs
+            o: addr=grid011.sysmango.net, vers=4.1
+            device: ":/srv/nfs/elastic/kibana/data"
+
+# - name: Deploy kibana service
+#   command: |
+#     docker service create -d \
+#     --name kibana \
+#     --network mangonet \
+#     --label traefik.port=5601 \
+#     --mount 'type=volume,"volume-opt=o=addr=grid011.sysmango.net,vers=4.1",volume-opt=device=:/srv/nfs/elastic/kibana/data,volume-opt=type=nfs,target=/var/lib/kibana'
+#     --replicas 1 \
+#     docker.elastic.co/kibana/kibana:7.0.0
+
+- name: "Wait for kibana to respond"
+  uri:
+    url: "http://kibana.sysmango.net"
+    status_code: 200
+  register: result
+  until: result.status == 200
+  retries: 600
+  delay: 1
