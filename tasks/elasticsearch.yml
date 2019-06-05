@@ -11,6 +11,7 @@
     mode: 0777
 
 - name: Deploy elasticsearch data service
+  connection: local
   docker_stack:
     state: present
     name: elasticsearch
