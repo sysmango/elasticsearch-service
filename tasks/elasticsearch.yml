@@ -28,7 +28,7 @@
               - nfs:/usr/share/elasticsearch/data
             networks:
               external:
-                - mangonet
+                name: mangonet
             ports:
               - 9200:9200
             deploy:
