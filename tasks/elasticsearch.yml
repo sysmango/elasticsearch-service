@@ -36,7 +36,7 @@
               labels:
                 traefik.port: 9200
                 traefik.hostname: elasticsearch
-        
+
         volumes:
           nfs:
             driver: local

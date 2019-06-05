@@ -31,7 +31,6 @@
         - mangonet
     labels:
       "traefik.port=8080"
-      "traefik.hostname=elasticsearch"
     mounts:
       - src: nfs
         target: /var/lib/kibana
