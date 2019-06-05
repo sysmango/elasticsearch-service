@@ -27,13 +27,15 @@
             volumes:
               - nfs:/usr/share/elasticsearch/data
             networks:
-              - mangonet
+              external:
+                - mangonet
             ports:
               - 9200:9200
             deploy:
               endpoint_mode: dnsrr
               labels:
                 traefik.port: 9200
+                traefik.hostname: elasticsearch
         
         volumes:
           nfs:

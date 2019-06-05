@@ -27,9 +27,11 @@
     name: kibana
     image: docker.elastic.co/kibana/kibana:7.1.1
     networks:
-      - mangonet
+      external:
+        - mangonet
     labels:
       "traefik.port=8080"
+      "traefik.hostname=elasticsearch"
     mounts:
       - src: nfs
         target: /var/lib/kibana
