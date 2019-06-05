@@ -36,8 +36,8 @@
                 traefik.port: 9200
           volumes:
             nfs:
-            driver: local
-            driver_opts:
-              type: nfs
-              o: addr=grid011.sysmango.net, vers=4.1
-              device: ":/srv/nfs/elastic/elasticsearch/data"
+              driver: local
+              driver_opts:
+                type: nfs
+                o: addr=grid011.sysmango.net, vers=4.1
+                device: ":/srv/nfs/elastic/elasticsearch/data"
