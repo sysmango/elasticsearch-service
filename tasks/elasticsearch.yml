@@ -27,8 +27,9 @@
             volumes:
               - nfs:/usr/share/elasticsearch/data
             networks:
-              external:
-                name: mangonet
+              default:
+                external:
+                  name: my-pre-existing-network
             ports:
               - 9200:9200
             deploy:
